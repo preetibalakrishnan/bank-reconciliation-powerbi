@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bank Reconciliation Dashboard</title>
+<meta name="description" content="A Power BI project built to practise reconciliation and reporting skills.">
+<style>
+  :root{--navy:#1F3864;--blue:#2E75B6;--page:#F3F5F9;--card:#FFFFFF;--line:#D9D9D9;--text:#252423;--sub:#5b6573}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",Arial,Helvetica,sans-serif;background:var(--page);color:var(--text);line-height:1.65}
+  header{background:var(--navy);color:#fff;padding:34px 20px 30px}
+  header .in{max-width:800px;margin:0 auto}
+  header h1{margin:0 0 6px;font-size:1.8rem;font-weight:600}
+  header p{margin:0;color:#C9D6EE}
+  main{max-width:800px;margin:0 auto;padding:22px 20px 20px}
+  section{background:var(--card);border:1px solid var(--line);border-radius:8px;padding:20px 24px;margin:0 0 18px}
+  h2{margin:0 0 10px;font-size:1.2rem;color:var(--navy);font-weight:600}
+  p{margin:0 0 10px}
+  ul,ol{margin:6px 0 10px;padding-left:22px}
+  li{margin-bottom:6px}
+  a{color:var(--blue)}
+  .note{background:#F3F5F9;border-left:4px solid var(--blue);padding:10px 14px;margin:12px 0;color:var(--sub);font-size:.95rem}
+  .tw{overflow-x:auto}
+  table{border-collapse:collapse;width:100%;margin:10px 0;font-size:.95rem}
+  th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+  th{background:var(--navy);color:#fff;font-weight:600}
+  img{max-width:100%;border:1px solid var(--line);border-radius:6px;display:block;margin:8px 0 12px}
+  .embed{position:relative;width:100%;aspect-ratio:16/9;min-height:380px;border:1px solid var(--line);border-radius:6px;overflow:hidden;background:#fff;margin:10px 0}
+  .embed iframe{position:absolute;top:0;left:0;width:100%;height:100%;border:0}
+  #embed-fallback{display:none;padding:28px;text-align:center;color:var(--sub)}
+  .small{color:var(--sub);font-size:.9rem}
+  footer{max-width:800px;margin:0 auto;padding:6px 20px 40px;color:var(--sub);font-size:.9rem}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="in">
+    <h1>Bank Reconciliation Dashboard</h1>
+    <p>A Power BI project built to practise reconciliation and reporting skills</p>
+  </div>
+</header>
+
+<main>
+
+<section>
+  <h2>1. About this project</h2>
+  <p>I am building my Power BI skills and chose bank reconciliation as a project because it is a core accounting activity. A reconciliation compares the company's cash book with the bank statement and explains every difference between them.</p>
+  <p>The objective was to see how much of this matching Power BI could automate, and to present the differences in a simple dashboard that shows what needs attention.</p>
+  <div class="note">All data used in this project is fictitious and was prepared for practice. No real company or bank data is used.</div>
+  <p>I learned this using online tutorials, and I used AI tools for guidance where I needed help. I have worked through each step to make sure I understand it.</p>
+</section>
+
+<section>
+  <h2>2. The data</h2>
+  <p>The project uses two Excel sheets:</p>
+  <ul>
+    <li><strong>Cash book:</strong> 1,500 lines of receipts and payments as recorded by the company.</li>
+    <li><strong>Bank statement:</strong> 1,500 lines of deposits and withdrawals as recorded by the bank.</li>
+  </ul>
+  <p>The data covers two bank accounts from April to September 2026. It contains typical reconciliation issues: cheques that clear late, amounts that differ, items recorded on only one side, and entries that appear twice.</p>
+</section>
+
+<section>
+  <h2>3. Approach</h2>
+  <ol>
+    <li><strong>Load the data.</strong> Both sheets were loaded into Power BI and opened in Power Query for cleaning.</li>
+    <li><strong>Clean the data.</strong> I set the date columns to the correct type, removed extra spaces from reference numbers, standardised them to capital letters, and created a single amount column (receipts less payments) in both tables.</li>
+    <li><strong>Identify duplicates.</strong> Lines with the same reference and amount appearing more than once in a table were flagged. My first method was slow, so I replaced it with Group By, which is faster.</li>
+    <li><strong>Join the two tables.</strong> The cash book and bank statement were matched on the reference number. I used a join that keeps lines from both sides, so items found on only one side are not lost.</li>
+    <li><strong>Assign a status to every line.</strong> Each line receives one of six statuses, described in the next section.</li>
+    <li><strong>Apply tolerance limits.</strong> Small differences, up to 3 days or ₹100, are classified as within tolerance. These limits are stored as parameters so they can be changed easily.</li>
+    <li><strong>Validate the results.</strong> I compared the count for each status against the expected answers to confirm the logic was correct.</li>
+    <li><strong>Build the dashboard.</strong> The report includes summary cards, a status chart, a table of items requiring action, and a bank account filter.</li>
+    <li><strong>Finalise and export.</strong> Formatting was applied, and the report was exported as a PDF.</li>
+  </ol>
+</section>
+
+<section>
+  <h2>4. Reconciliation statuses</h2>
+  <div class="tw"><table>
+    <tr><th>Status</th><th>Meaning</th></tr>
+    <tr><td>Perfect match</td><td>Reference, date and amount agree in both records</td></tr>
+    <tr><td>Date mismatch</td><td>Reference and amount agree, but the dates differ (for example, a cheque cleared late)</td></tr>
+    <tr><td>Amount mismatch</td><td>Reference agrees, but the amounts differ (for example, TDS deducted or a keying error)</td></tr>
+    <tr><td>Only in books</td><td>Recorded by the company but not yet in the bank (for example, an outstanding cheque)</td></tr>
+    <tr><td>Only in bank</td><td>Appears in the bank but not recorded by the company (for example, bank charges or interest)</td></tr>
+    <tr><td>Potential duplicate</td><td>The same reference and amount appears more than once and may have been entered twice</td></tr>
+  </table></div>
+</section>
+
+<section>
+  <h2>5. Results</h2>
+  <img src="assets/dashboard-page1.png" alt="Screenshot of the Bank Reconciliation dashboard" onerror="this.style.display='none'">
+  <p>Of 1,607 lines, 1,174 matched perfectly (73.06%) and 433 require follow-up.</p>
+  <div class="tw"><table>
+    <tr><th>Status</th><th>Lines</th></tr>
+    <tr><td>Perfect match</td><td>1,174</td></tr>
+    <tr><td>Date mismatch (within / outside 3 days)</td><td>70 / 70</td></tr>
+    <tr><td>Amount mismatch (within / outside ₹100)</td><td>13 / 35</td></tr>
+    <tr><td>Only in books</td><td>90</td></tr>
+    <tr><td>Only in bank</td><td>93</td></tr>
+    <tr><td>Potential duplicate (31 references, 2 lines each)</td><td>62</td></tr>
+  </table></div>
+  <p>The dashboard has three summary cards (total lines, matched percentage and items to review), a bar chart of the statuses, a table of items requiring action, and a bank account filter.</p>
+</section>
+
+<section>
+  <h2>6. Challenges and learnings</h2>
+  <ul>
+    <li><strong>Performance.</strong> My first duplicate check worked but was slow because it re-scanned the entire table for every row. Group By achieves the same result much faster.</li>
+    <li><strong>Blank values.</strong> After the join, some cells were blank, which caused errors until I treated a blank count as zero.</li>
+    <li><strong>Boundary conditions.</strong> My tolerance rule missed differences of exactly 3 days because I had used "less than" instead of "less than or equal to". I found this when my counts did not match the expected numbers.</li>
+    <li><strong>Filter behaviour.</strong> Clicking a bar in the chart caused one card to show a negative value. This taught me that measures respond to filters, so I need to be careful about which column each measure uses.</li>
+    <li><strong>Data quality.</strong> Reference numbers with extra spaces or lowercase letters do not match until they are cleaned.</li>
+  </ul>
+</section>
+
+<section>
+  <h2>7. Planned improvements</h2>
+  <ul>
+    <li>Add a reconciliation statement that moves from the bank balance to the books balance.</li>
+    <li>Allow the tolerance limits to be adjusted directly on the report page.</li>
+    <li>Test with messier data that resembles real bank statements.</li>
+    <li>Build two further dashboards: budget vs actuals, and receivables and payables ageing.</li>
+  </ul>
+</section>
+
+<section id="report">
+  <h2>8. Live report</h2>
+  <p>The report below is interactive. You can use the account filter and click on the chart.</p>
+  <div class="embed">
+    <iframe id="pbi" title="Bank Reconciliation Dashboard" data-src="https://app.powerbi.com/view?r=eyJrIjoiZDA4OTNjNmMtMjUyYy00OWQyLWExOWEtMmI2ZTMwMzljMTY0IiwidCI6IjkwYTYzOTE2LWZhYjItNDdhYy04YjNmLWVhODgzNTFjNDRlNiJ9" allowfullscreen="true"></iframe>
+    <div id="embed-fallback">
+      <p><strong>The live report is not available right now.</strong></p>
+      <p>Please see the screenshot above, or open the files:<br>
+      <a href="assets/BankRecon_Dashboard.pdf">Dashboard PDF</a> &middot;
+      <a href="report/BankRecon_Dashboard.pbix">Power BI file</a> &middot;
+      <a href="data/bank_recon_sample_data.xlsx">Practice data (Excel)</a></p>
+    </div>
+  </div>
+  <p class="small">Note: The live report is hosted on a trial account and may stop loading after the trial ends. The PDF and Power BI file in this repository remain available.</p>
+  <p class="small"><a href="assets/BankRecon_Dashboard.pdf">Dashboard PDF</a> &middot; <a href="report/BankRecon_Dashboard.pbix">Power BI file</a> &middot; <a href="data/bank_recon_sample_data.xlsx">Practice data (Excel)</a></p>
+</section>
+
+</main>
+
+<footer>
+  Prepared by Preeti Balakrishnan &middot; <a href="https://github.com/preetibalakrishnan">GitHub</a> &middot; <a href="https://www.linkedin.com/in/preeti-balakrishnan-58aa67265">LinkedIn</a><br>
+  Data is fictitious and used for practice only.
+</footer>
+
+<script>
+  (function () {
+    var f = document.getElementById('pbi');
+    var src = f.getAttribute('data-src');
+    if (src && src.indexOf('PASTE_') === -1 && /^https:\/\//.test(src)) {
+      f.src = src;
+    } else {
+      f.style.display = 'none';
+      document.getElementById('embed-fallback').style.display = 'block';
+    }
+  })();
+</script>
+</body>
+</html>
